@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ClearPath — Turn 6-week vendor questionnaires into 24–48 hour responses. ML-mapped TPRM response portal for suppliers." />
+  <title>ClearPath — Supplier TPRM Response Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+/* ClearPath — design tokens */
+:root {
+  --bg: #0c1117;
+  --bg-elevated: #141b24;
+  --bg-card: #1a2332;
+  --bg-input: #0f151d;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #e8edf4;
+  --text-muted: #8b9cb3;
+  --text-dim: #5c6d82;
+  --accent: #3d9b8f;
+  --accent-hover: #4db5a8;
+  --accent-glow: rgba(61, 155, 143, 0.25);
+  --green: #3dba7a;
+  --green-bg: rgba(61, 186, 122, 0.12);
+  --yellow: #d4a843;
+  --yellow-bg: rgba(212, 168, 67, 0.12);
+  --red: #e05c5c;
+  --red-bg: rgba(224, 92, 92, 0.12);
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --header-h: 72px;
+  --max: 1120px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { margin: 0 0 0.5em; line-height: 1.2; }
+h1 { font-family: var(--serif); font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 400; }
+h1 em { font-style: italic; color: var(--accent); }
+h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 600; letter-spacing: -0.02em; }
+p { margin: 0 0 1em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+img { max-width: 100%; height: auto; }
+
+/* Header */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 1.5rem;
+  background: rgba(12, 17, 23, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, #2a6b63 100%);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text); }
+.header-cta { display: flex; gap: 0.75rem; }
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn-lg { padding: 0.85rem 1.75rem; font-size: 1rem; }
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.8rem; }
+.btn-primary {
+  background: var(--accent);
+  color: #0a1210;
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #0a1210;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn-outline:hover {
+  background: var(--bg-card);
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+}
+.btn-ghost:hover { color: var(--text); }
+.btn-accent {
+  background: var(--red-bg);
+  color: var(--red);
+  border-color: rgba(224, 92, 92, 0.35);
+}
+.btn-accent:hover { background: rgba(224, 92, 92, 0.2); }
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  min-height: 100vh;
+  padding: calc(var(--header-h) + 3rem) 1.5rem 4rem;
+  max-width: calc(var(--max) + 3rem);
+  margin: 0 auto;
+}
+.eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.hero-lead {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 32rem;
+  margin-bottom: 2rem;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 3rem; }
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin: 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.hero-stats dt {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+.hero-stats dd {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.hero-visual { display: flex; justify-content: flex-end; }
+.hero-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 1.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+.hero-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.hero-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.35rem; }
+.q-count { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+.pill {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+}
+.pill-high { background: var(--red-bg); color: var(--red); }
+.due { font-size: 0.8rem; color: var(--text-dim); }
+.mini-bars { margin-bottom: 1rem; }
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.bar {
+  flex: 0 0 120px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-input);
+  position: relative;
+  overflow: hidden;
+}
+.bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--w, 50%);
+  border-radius: 3px;
+}
+.bar.green::after { background: var(--green); }
+.bar.yellow::after { background: var(--yellow); }
+.bar.red::after { background: var(--red); }
+.eta { font-size: 0.9rem; color: var(--accent); margin: 0; font-weight: 500; }
+
+/* Sections */
+.section { padding: 5rem 1.5rem; }
+.section-inner { max-width: var(--max); margin: 0 auto; }
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+.section-desc {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Problem */
+.problem { background: var(--bg-elevated); }
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+.pain-card {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.pain-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+.pain-card h3 { font-size: 1.05rem; margin: 0.5rem 0; }
+.pain-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
+
+/* Workflow */
+.flow-diagram {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 3rem;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.flow-step {
+  flex: 1 1 140px;
+  text-align: center;
+  padding: 1rem;
+}
+.flow-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.flow-step h4 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+.flow-step p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+.flow-arrow { color: var(--text-dim); font-size: 1.25rem; flex-shrink: 0; }
+.flow-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 200px;
+}
+.branch {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+.branch p { margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.75rem; }
+.green-branch { background: var(--green-bg); }
+.yellow-branch { background: var(--yellow-bg); }
+.red-branch { background: var(--red-bg); }
+.flow-step-final .flow-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-bg);
+  color: var(--green);
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 4px;
+}
+.status-badge.green { background: var(--green-bg); color: var(--green); }
+.status-badge.yellow { background: var(--yellow-bg); color: var(--yellow); }
+.status-badge.red { background: var(--red-bg); color: var(--red); }
+
+.compare-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.compare-table th,
+.compare-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.compare-table th {
+  background: var(--bg-card);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.compare-table th:last-child { color: var(--accent); }
+.compare-table td:first-child { color: var(--text-dim); }
+.compare-table td:last-child { color: var(--text); }
+.compare-table tr:last-child td { border-bottom: none; }
+
+/* Demo */
+.demo { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%); }
+.demo-shell {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.35);
+}
+.demo-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.demo-tabs button {
+  flex: 1;
+  min-width: 160px;
+  padding: 1rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.demo-tabs button:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.demo-tabs button[aria-selected="true"] {
+  color: var(--accent);
+  background: var(--bg-card);
+  border-bottom-color: var(--accent);
+}
+.tab-num {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  text-align: center;
+  background: var(--border);
+  border-radius: 4px;
+  vertical-align: middle;
+}
+.demo-tabs button[aria-selected="true"] .tab-num {
+  background: var(--accent-glow);
+  color: var(--accent);
+}
+
+.demo-app { min-height: 480px; }
+.demo-panel { display: none; }
+.demo-panel.active { display: block; }
+
+.app-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+.chrome-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.chrome-dot:first-child { background: #e05c5c; }
+.chrome-dot:nth-child(2) { background: #d4a843; }
+.chrome-dot:nth-child(3) { background: #3dba7a; }
+.chrome-title { margin-left: 0.5rem; }
+
+/* Dashboard panel */
+.dashboard-panel { padding: 1.75rem; }
+.request-header h3 { font-size: 1.25rem; }
+.request-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0;
+}
+.request-meta span:not(.pill)::after {
+  content: "·";
+  margin-left: 1rem;
+  color: var(--text-dim);
+}
+.request-meta span:last-child::after { display: none; }
+
+.dashboard-stats { margin: 2rem 0; }
+.big-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+.big-number span { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+.progress-bars { display: flex; flex-direction: column; gap: 1rem; max-width: 480px; }
+.progress-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.35rem 1rem;
+  align-items: center;
+}
+.progress-label {
+  grid-column: 1;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.green { background: var(--green); }
+.dot.yellow { background: var(--yellow); }
+.dot.red { background: var(--red); }
+.progress-track {
+  grid-column: 1 / -1;
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.progress-fill.green { background: var(--green); }
+.progress-fill.yellow { background: var(--yellow); }
+.progress-fill.red { background: var(--red); }
+.progress-count { font-size: 0.8rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.estimate { font-size: 0.95rem; color: var(--text-muted); margin: 1.5rem 0 0; }
+.estimate strong { color: var(--accent); }
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.live-link-preview {
+  padding: 1.25rem;
+  background: var(--bg-input);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+.live-link-preview h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.5rem; }
+.link-url {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.progress-checklist { list-style: none; margin: 0 0 1rem; padding: 0; font-size: 0.9rem; }
+.progress-checklist li { margin-bottom: 0.35rem; }
+.progress-checklist .done { color: var(--green); }
+.progress-checklist .pending { color: var(--yellow); }
+.progress-checklist .gap { color: var(--red); }
+.link-eta { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+/* Workspace */
+.workspace-panel { padding: 1.75rem; }
+.domain-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+.domain-tag span { font-weight: 400; color: var(--text-dim); }
+
+.question-card {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--border-strong);
+}
+.question-card.status-green { border-left-color: var(--green); }
+.question-card.status-yellow { border-left-color: var(--yellow); }
+.question-card.status-red { border-left-color: var(--red); }
+.q-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.q-id { font-size: 0.75rem; font-weight: 700; color: var(--text-dim); }
+.question-card h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.75rem; }
+.match-result { margin-bottom: 1rem; }
+.match-doc { font-size: 0.85rem; color: var(--accent); margin-bottom: 0.35rem; }
+.match-doc.gap { color: var(--red); }
+.match-excerpt {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--border);
+}
+.match-excerpt.warn { color: var(--yellow); border-left-color: var(--yellow); }
+.q-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Library */
+.library-panel { padding: 1.75rem; }
+.library-intro {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.table-wrap { overflow-x: auto; margin-bottom: 1rem; }
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.doc-table th,
+.doc-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.doc-table th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.doc-table td { color: var(--text-muted); }
+.doc-table td strong { color: var(--text); }
+.doc-table .missing { color: var(--red); font-style: italic; }
+.row-flag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 3px;
+  background: var(--yellow-bg);
+  color: var(--yellow);
+  vertical-align: middle;
+}
+.row-flag.gap { background: var(--red-bg); color: var(--red); }
+.coverage-bar {
+  display: inline-block;
+  width: 64px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+  overflow: hidden;
+}
+.coverage-fill {
+  display: block;
+  height: 100%;
+  width: var(--score, 0%);
+  background: var(--green);
+  border-radius: 3px;
+}
+.coverage-bar.low .coverage-fill { background: var(--yellow); }
+.coverage-bar.mid .coverage-fill { background: var(--accent); }
+.coverage-bar.empty .coverage-fill { background: var(--text-dim); }
+
+/* Features */
+.features { background: var(--bg-elevated); }
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 2rem 0 3rem;
+}
+.feature-card {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.feature-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+.feature-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
+
+.coordination-block {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.coordination-block h3 { margin-bottom: 1rem; }
+.coord-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.coord-list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+.coord-list li:last-child { border-bottom: none; }
+.coord-list strong { color: var(--text); }
+
+/* Pricing */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+.price-card {
+  position: relative;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+.price-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 16px 40px rgba(0,0,0,0.3);
+}
+.featured-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--accent);
+  color: #0a1210;
+  border-radius: 4px;
+}
+.price-card h3 { font-size: 1.25rem; }
+.price-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+.price-card ul {
+  flex: 1;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.price-card li {
+  padding: 0.4rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+}
+.price-card li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+.price-card .btn { width: 100%; margin-top: auto; }
+
+/* CTA + Footer */
+.cta-final {
+  text-align: center;
+  padding: 5rem 1.5rem;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, var(--accent-glow), transparent 70%);
+}
+.cta-final h2 { max-width: 28rem; margin: 0 auto 0.75rem; }
+.cta-final p { color: var(--text-muted); margin-bottom: 2rem; }
+
+.site-footer {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.site-footer .logo { justify-content: center; margin-bottom: 0.5rem; }
+.footer-copy { margin-top: 1rem; font-size: 0.75rem; }
+
+/* Intro / Story section */
+.intro { background: var(--bg); }
+.intro-headline {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 600;
+  max-width: 38rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+.intro-sub {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 36rem;
+  margin-bottom: 3.5rem;
+}
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.story-card {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+.story-persona {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.persona-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.persona-name { font-weight: 600; font-size: 0.95rem; }
+.persona-title { font-size: 0.8rem; color: var(--text-dim); }
+.story-card blockquote {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--text);
+  font-style: italic;
+  flex: 1;
+}
+.story-outcome {
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.who-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.who-card {
+  padding: 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.who-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+.who-card h3 { font-size: 1rem; margin-bottom: 0.35rem; }
+.who-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+.why-block {
+  margin-top: 3.5rem;
+  padding: 2.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.why-block h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.75rem; }
+.why-block p { color: var(--text-muted); font-size: 0.975rem; margin-bottom: 1rem; }
+.why-block p:last-child { margin-bottom: 0; }
+.why-stat-stack { display: flex; flex-direction: column; gap: 1.25rem; }
+.why-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.why-stat-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  white-space: nowrap;
+}
+.why-stat-label { font-size: 0.875rem; color: var(--text-muted); margin: 0.25rem 0 0; }
+.use-cases-cta {
+  margin-top: 3rem;
+  padding: 1.75rem 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.use-cases-cta p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+.use-cases-cta strong { color: var(--text); }
+.use-case-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Mobile nav */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; text-align: center; padding-top: calc(var(--header-h) + 2rem); }
+  .hero-lead { margin-left: auto; margin-right: auto; }
+  .hero-actions, .hero-stats { justify-content: center; }
+  .hero-visual { justify-content: center; }
+  .problem-grid, .feature-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .flow-diagram { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .story-grid, .who-grid { grid-template-columns: 1fr; }
+  .why-block { grid-template-columns: 1fr; gap: 2rem; }
+  .use-cases-cta { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+  .nav-links, .header-cta { display: none; }
+  .menu-toggle { display: flex; }
+  body.nav-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+  }
+  body.nav-open .header-cta {
+    display: flex;
+    position: fixed;
+    top: calc(var(--header-h) + 180px);
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+  .hero-stats { flex-direction: column; gap: 1rem; align-items: center; }
+}
+
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="#" class="logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      ClearPath
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#intro">About</a>
+      <a href="#problem">Problem</a>
+      <a href="#workflow">How it works</a>
+      <a href="#demo">Product</a>
+      <a href="#pricing">Pricing</a>
+      <a href="use-cases.html">Use Cases</a>
+    </nav>
+    <div class="header-cta">
+      <a href="#demo" class="btn btn-ghost">See demo</a>
+      <a href="#pricing" class="btn btn-primary">Get started</a>
+    </div>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Supplier TPRM Response Portal</p>
+        <h1>The 6-week wait isn't the work.<br /><em>It's the chaos.</em></h1>
+        <p class="hero-lead">
+          Upload the buyer's questionnaire. In the first hour, see exactly what you have,
+          what's missing, and who's responsible — then package and submit in 24–48 hours.
+        </p>
+        <div class="hero-actions">
+          <a href="#demo" class="btn btn-primary btn-lg">Explore the portal</a>
+          <a href="#workflow" class="btn btn-outline btn-lg">See the workflow</a>
+        </div>
+        <dl class="hero-stats">
+          <div>
+            <dt>150 questions</dt>
+            <dd>Mapped in minutes</dd>
+          </div>
+          <div>
+            <dt>69% auto-matched</dt>
+            <dd>On first upload</dd>
+          </div>
+          <div>
+            <dt>4–6 hours</dt>
+            <dd>Not 6–8 weeks</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="pill pill-high">High risk</span>
+            <span class="due">Due May 30</span>
+          </div>
+          <h3>Acme Corp — Annual Vendor Review</h3>
+          <p class="q-count">142 questions · Received today</p>
+          <div class="mini-bars">
+            <div class="bar-row"><span class="bar green" style="--w: 69%"></span><span>98 mapped</span></div>
+            <div class="bar-row"><span class="bar yellow" style="--w: 20%"></span><span>28 review</span></div>
+            <div class="bar-row"><span class="bar red" style="--w: 11%"></span><span>16 gaps</span></div>
+          </div>
+          <p class="eta">Est. completion: 4–6 hours</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="intro" class="section intro">
+      <div class="section-inner">
+        <div class="section-label">Why ClearPath exists</div>
+        <h2 class="intro-headline">Third-party risk reviews shouldn't take six weeks. They don't have to.</h2>
+        <p class="intro-sub">ClearPath was built for one reason: the people doing this work are smart, the information exists, and the process is still broken. We fix the process.</p>
+
+        <!-- Story cards -->
+        <div class="story-grid">
+          <div class="story-card">
+            <div class="story-persona">
+              <div class="persona-avatar">👩‍💼</div>
+              <div>
+                <div class="persona-name">Sarah M.</div>
+                <div class="persona-title">GRC Manager · Series B SaaS</div>
+              </div>
+            </div>
+            <blockquote>"We'd get a 200-question SIG from a Fortune 500 and I'd spend the first three days just emailing people asking if we had a document. Half the time nobody knew. We were one deal away from a compliance hire we couldn't afford."</blockquote>
+            <div class="story-outcome">→ Now maps 150 questions in under 20 minutes on intake</div>
+          </div>
+          <div class="story-card">
+            <div class="story-persona">
+              <div class="persona-avatar">👨‍💻</div>
+              <div>
+                <div class="persona-name">Marcus T.</div>
+                <div class="persona-title">IT Security Lead · Health IT Vendor</div>
+              </div>
+            </div>
+            <blockquote>"Every hospital system asks essentially the same HIPAA questions in a completely different format. We were copy-pasting answers from old submissions and hoping nothing had changed. When something had changed, we found out from the buyer — not ourselves."</blockquote>
+            <div class="story-outcome">→ Answer library stays current; gaps surface before buyers do</div>
+          </div>
+          <div class="story-card">
+            <div class="story-persona">
+              <div class="persona-avatar">🏢</div>
+              <div>
+                <div class="persona-name">Priya K.</div>
+                <div class="persona-title">Operations Director · Regional MSP</div>
+              </div>
+            </div>
+            <blockquote>"We manage compliance for 40+ clients. When three of them got vendor questionnaires the same week, my team was underwater. There was no system — just spreadsheets, email threads, and someone manually tracking who owed what."</blockquote>
+            <div class="story-outcome">→ Three concurrent requests handled in parallel without adding headcount</div>
+          </div>
+        </div>
+
+        <!-- Who it's for -->
+        <div class="section-label">Built for</div>
+        <h2 style="font-size: clamp(1.25rem,2.5vw,1.75rem); margin-bottom: 0.5rem;">Any organization that sells to organizations with compliance requirements</h2>
+        <p class="section-desc">If your buyers are in finance, healthcare, government, or enterprise tech — they have a vendor review process. ClearPath makes yours fast.</p>
+        <div class="who-grid">
+          <div class="who-card">
+            <div class="who-icon">🏗️</div>
+            <h3>SaaS &amp; Tech Vendors</h3>
+            <p>Series A–C companies whose growth depends on landing enterprise deals — and enterprise deals require passing security reviews.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🏥</div>
+            <h3>Healthcare &amp; Life Sciences Suppliers</h3>
+            <p>Vendors selling into hospital systems, payers, or pharma where HIPAA, SOC 2, and HITRUST questionnaires come with every contract.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🔧</div>
+            <h3>Managed Service Providers</h3>
+            <p>MSPs and consultancies that manage compliance on behalf of clients and need to run multiple reviews simultaneously without breaking stride.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">💳</div>
+            <h3>Financial Services Partners</h3>
+            <p>Fintech and payments vendors whose buyers run quarterly or annual PCI-DSS, SOC 2, and internal vendor risk assessments.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🏛️</div>
+            <h3>Government Contractors</h3>
+            <p>Contractors and sub-contractors who navigate CMMC, FedRAMP, and agency-specific security questionnaires as part of bid and renewal cycles.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🌐</div>
+            <h3>Any Supplier to a Global Enterprise</h3>
+            <p>If your largest customers use SAP Ariba, ServiceNow, or internal TPRM platforms — your vendor reviews just got automated.</p>
+          </div>
+        </div>
+
+        <!-- Why now -->
+        <div class="why-block">
+          <div>
+            <h3>The problem isn't complexity. It's coordination.</h3>
+            <p>A typical 150-question vendor security questionnaire contains roughly 40 unique concepts. Your organization almost certainly has documented answers to 80–90% of them — scattered across SharePoint, Google Drive, email attachments, and a compliance folder no one's touched since 2023.</p>
+            <p>The six-week timeline exists because finding, matching, routing, reviewing, and packaging those answers is pure coordination work. ClearPath eliminates the coordination overhead and leaves only the judgment calls that actually require human expertise.</p>
+            <p>Your compliance team stops being a relay race. They start being reviewers.</p>
+          </div>
+          <div class="why-stat-stack">
+            <div class="why-stat">
+              <div class="why-stat-num">6 wk</div>
+              <div>
+                <div style="font-weight:600; font-size:0.9rem;">Average industry response time</div>
+                <div class="why-stat-label">For a standard 100–200 question TPRM questionnaire</div>
+              </div>
+            </div>
+            <div class="why-stat">
+              <div class="why-stat-num">4–6 hr</div>
+              <div>
+                <div style="font-weight:600; font-size:0.9rem;">ClearPath response time</div>
+                <div class="why-stat-label">For the same questionnaire with an established document library</div>
+              </div>
+            </div>
+            <div class="why-stat">
+              <div class="why-stat-num">69%</div>
+              <div>
+                <div style="font-weight:600; font-size:0.9rem;">Auto-mapped on first upload</div>
+                <div class="why-stat-label">ML confidence ≥85% — no human review required</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Use case white paper CTAs -->
+        <div class="use-cases-cta">
+          <div>
+            <strong>See it in your context.</strong>
+            <p>Read our use case white papers for specific industries and scenarios.</p>
+          </div>
+          <div class="use-case-links">
+            <a href="clearpath-usecase-saas.html" class="btn btn-outline btn-sm">SaaS Vendor Review →</a>
+            <a href="clearpath-usecase-healthcare.html" class="btn btn-outline btn-sm">Healthcare Supplier →</a>
+            <a href="clearpath-usecase-msp.html" class="btn btn-outline btn-sm">MSP Multi-Client →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem" class="section problem">
+      <div class="section-inner">
+        <div class="section-label">The real problem</div>
+        <h2>Your compliance analyst is a coordinator, not a reviewer.</h2>
+        <div class="problem-grid">
+          <article class="pain-card">
+            <span class="pain-num">01</span>
+            <h3>150 blank questions</h3>
+            <p>No map from questionnaire items to policies in SharePoint, Drive, or email attachments.</p>
+          </article>
+          <article class="pain-card">
+            <span class="pain-num">02</span>
+            <h3>Six department email chains</h3>
+            <p>"Do we have a policy for this?" — days of waiting before anyone can start real work.</p>
+          </article>
+          <article class="pain-card">
+            <span class="pain-num">03</span>
+            <h3>Gaps discovered mid-flight</h3>
+            <p>Twenty policies don't exist. Writing from scratch pushes the timeline to weeks.</p>
+          </article>
+          <article class="pain-card">
+            <span class="pain-num">04</span>
+            <h3>Buyer in the dark</h3>
+            <p>They give 6–8 weeks because that's how long coordination takes — not because the work requires it.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflow" class="section workflow">
+      <div class="section-inner">
+        <div class="section-label">Core workflow</div>
+        <h2>From upload to package in one continuous flow.</h2>
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-icon">📄</div>
+            <h4>Upload request</h4>
+            <p>Questionnaire, PDF, Excel, CSV, or paste text</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">⚡</div>
+            <h4>ML maps every question</h4>
+            <p>To your document library in minutes</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-branches">
+            <div class="branch green-branch">
+              <span class="status-badge green">Green</span>
+              <p>≥85% certain — auto-matched</p>
+            </div>
+            <div class="branch yellow-branch">
+              <span class="status-badge yellow">Yellow</span>
+              <p>Partial — route owner to confirm</p>
+            </div>
+            <div class="branch red-branch">
+              <span class="status-badge red">Red</span>
+              <p>Gap — draft or assign owner</p>
+            </div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-step flow-step-final">
+            <div class="flow-icon">✓</div>
+            <h4>Package + submit</h4>
+            <p>Within 24–48 hours</p>
+          </div>
+        </div>
+
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Old process</th>
+                <th>With ClearPath</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Manually read 150 questions</td><td>Uploaded, parsed, mapped in minutes</td></tr>
+              <tr><td>Email 6 departments</td><td>Auto-routed on intake</td></tr>
+              <tr><td>Hunt for documents</td><td>ML surfaces them with confidence score</td></tr>
+              <tr><td>Discover gaps mid-process</td><td>Gaps flagged in hour one</td></tr>
+              <tr><td>Write policies from scratch</td><td>Drafts generated from templates</td></tr>
+              <tr><td>Compile response manually</td><td>Package auto-built from confirmed answers</td></tr>
+              <tr><td>Buyer waits silently</td><td>Live progress link shared same day</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section demo">
+      <div class="section-inner">
+        <div class="section-label">The three screens that matter</div>
+        <h2>See the shape of the problem in hour one.</h2>
+        <p class="section-desc">Interactive preview — switch between the request dashboard, question workspace, and document library.</p>
+
+        <div class="demo-shell">
+          <nav class="demo-tabs" role="tablist" aria-label="Product screens">
+            <button role="tab" aria-selected="true" aria-controls="panel-dashboard" id="tab-dashboard" data-panel="dashboard">
+              <span class="tab-num">1</span> Request Dashboard
+            </button>
+            <button role="tab" aria-selected="false" aria-controls="panel-workspace" id="tab-workspace" data-panel="workspace">
+              <span class="tab-num">2</span> Question Workspace
+            </button>
+            <button role="tab" aria-selected="false" aria-controls="panel-library" id="tab-library" data-panel="library">
+              <span class="tab-num">3</span> Document Library
+            </button>
+          </nav>
+
+          <div class="demo-app">
+            <!-- Screen 1: Dashboard -->
+            <div id="panel-dashboard" class="demo-panel active" role="tabpanel" aria-labelledby="tab-dashboard">
+              <div class="app-chrome">
+                <span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span>
+                <span class="chrome-title">clearpath.app / requests / acme-2026</span>
+              </div>
+              <div class="dashboard-panel">
+                <header class="request-header">
+                  <div>
+                    <h3>Acme Corp — Annual Vendor Review</h3>
+                    <p class="request-meta">
+                      <span>Received: Today</span>
+                      <span>Due: May 30, 2026</span>
+                      <span class="pill pill-high">Risk Tier: High</span>
+                    </p>
+                  </div>
+                </header>
+
+                <div class="dashboard-stats">
+                  <p class="big-number">142 <span>Questions</span></p>
+                  <div class="progress-bars">
+                    <div class="progress-item">
+                      <div class="progress-label"><span class="dot green"></span> Auto-mapped</div>
+                      <div class="progress-track"><div class="progress-fill green" style="width: 69%"></div></div>
+                      <span class="progress-count">98 (69%)</span>
+                    </div>
+                    <div class="progress-item">
+                      <div class="progress-label"><span class="dot yellow"></span> Need review</div>
+                      <div class="progress-track"><div class="progress-fill yellow" style="width: 20%"></div></div>
+                      <span class="progress-count">28 (20%)</span>
+                    </div>
+                    <div class="progress-item">
+                      <div class="progress-label"><span class="dot red"></span> Gaps</div>
+                      <div class="progress-track"><div class="progress-fill red" style="width: 11%"></div></div>
+                      <span class="progress-count">16 (11%)</span>
+                    </div>
+                  </div>
+                  <p class="estimate">Estimated time to complete: <strong>4–6 hours</strong></p>
+                </div>
+
+                <div class="dashboard-actions">
+                  <button type="button" class="btn btn-primary" data-goto="workspace">Start Working</button>
+                  <button type="button" class="btn btn-outline">Assign Team</button>
+                  <button type="button" class="btn btn-outline">Share Progress</button>
+                </div>
+
+                <aside class="live-link-preview">
+                  <h4>Live progress link</h4>
+                  <p class="link-url">clearpath.app/progress/acme-x7k2</p>
+                  <ul class="progress-checklist">
+                    <li class="done">✓ 98 questions complete</li>
+                    <li class="pending">◌ 28 in review</li>
+                    <li class="gap">✗ 16 in progress — policy drafts underway</li>
+                  </ul>
+                  <p class="link-eta">Est. completion: <strong>May 28, 2026</strong></p>
+                </aside>
+              </div>
+            </div>
+
+            <!-- Screen 2: Workspace -->
+            <div id="panel-workspace" class="demo-panel" role="tabpanel" aria-labelledby="tab-workspace" hidden>
+              <div class="app-chrome">
+                <span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span>
+                <span class="chrome-title">Workspace · Information Security</span>
+              </div>
+              <div class="workspace-panel">
+                <p class="domain-tag">Domain: Information Security <span>(48 questions)</span></p>
+
+                <article class="question-card status-green">
+                  <div class="q-header">
+                    <span class="q-id">Q14</span>
+                    <span class="status-badge green">96% match</span>
+                  </div>
+                  <h4>Do you have a documented Information Security Policy?</h4>
+                  <div class="match-result">
+                    <p class="match-doc">→ InfoSec Policy v3.1 — last reviewed Jan 2026</p>
+                    <p class="match-excerpt">"Section 2.1 covers scope, ownership, and annual review cycle..."</p>
+                  </div>
+                  <div class="q-actions">
+                    <button type="button" class="btn btn-sm btn-primary">Use This</button>
+                    <button type="button" class="btn btn-sm btn-ghost">Swap Document</button>
+                  </div>
+                </article>
+
+                <article class="question-card status-yellow">
+                  <div class="q-header">
+                    <span class="q-id">Q15</span>
+                    <span class="status-badge yellow">71% match</span>
+                  </div>
+                  <h4>Do you encrypt data at rest using AES-256 or equivalent?</h4>
+                  <div class="match-result">
+                    <p class="match-doc">→ Data Classification Policy — Section 4</p>
+                    <p class="match-excerpt warn">Covers encryption in transit but only partially addresses at-rest requirements.</p>
+                  </div>
+                  <div class="q-actions">
+                    <button type="button" class="btn btn-sm btn-primary">Confirm</button>
+                    <button type="button" class="btn btn-sm btn-ghost">Add Evidence</button>
+                    <button type="button" class="btn btn-sm btn-ghost">Route to IT Owner</button>
+                  </div>
+                </article>
+
+                <article class="question-card status-red">
+                  <div class="q-header">
+                    <span class="q-id">Q22</span>
+                    <span class="status-badge red">No match</span>
+                  </div>
+                  <h4>Do you conduct annual penetration testing?</h4>
+                  <div class="match-result">
+                    <p class="match-doc gap">→ No document in your library satisfies this.</p>
+                  </div>
+                  <div class="q-actions">
+                    <button type="button" class="btn btn-sm btn-accent">Generate Policy Draft</button>
+                    <button type="button" class="btn btn-sm btn-ghost">Write Direct Response</button>
+                    <button type="button" class="btn btn-sm btn-ghost">Mark as N/A</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <!-- Screen 3: Library -->
+            <div id="panel-library" class="demo-panel" role="tabpanel" aria-labelledby="tab-library" hidden>
+              <div class="app-chrome">
+                <span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span>
+                <span class="chrome-title">Document Library · Evidence vault</span>
+              </div>
+              <div class="library-panel">
+                <p class="library-intro">Your evidence vault — gets smarter with every request. Coverage score shows readiness if a new request arrived today.</p>
+                <div class="table-wrap">
+                  <table class="doc-table">
+                    <thead>
+                      <tr>
+                        <th>Document</th>
+                        <th>Domain</th>
+                        <th>Last Reviewed</th>
+                        <th>Coverage</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>InfoSec Policy</strong></td>
+                        <td>Security</td>
+                        <td>Jan 2026</td>
+                        <td><span class="coverage-bar" style="--score: 87%"><span class="coverage-fill"></span></span> 87%</td>
+                      </tr>
+                      <tr class="row-alert">
+                        <td><strong>BCP/DR Plan</strong> <span class="row-flag">Expiring</span></td>
+                        <td>BC/DR</td>
+                        <td>Mar 2025</td>
+                        <td><span class="coverage-bar low" style="--score: 41%"><span class="coverage-fill"></span></span> 41%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Privacy Policy</strong></td>
+                        <td>Privacy</td>
+                        <td>Nov 2025</td>
+                        <td><span class="coverage-bar mid" style="--score: 74%"><span class="coverage-fill"></span></span> 74%</td>
+                      </tr>
+                      <tr class="row-gap">
+                        <td><strong>Vendor Mgmt</strong> <span class="row-flag gap">Gap</span></td>
+                        <td>Ops</td>
+                        <td class="missing">Missing</td>
+                        <td><span class="coverage-bar empty" style="--score: 0%"><span class="coverage-fill"></span></span> 0%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm">+ Upload document</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section features">
+      <div class="section-inner">
+        <div class="section-label">Beyond mapping</div>
+        <h2>Subscription intelligence — the moat.</h2>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Answer intelligence</h3>
+            <p>Maintained database of what good answers look like for SIG, CAIQ, ISO 27001, SOC 2, GDPR, HIPAA, PCI-DSS.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Gap guidance</h3>
+            <p>Not just "you're missing this" — exactly what a satisfying document needs to contain.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Regulatory alerts</h3>
+            <p>When frameworks change, mapped documents are flagged for re-review before buyers ask.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Industry benchmarks</h3>
+            <p>"Suppliers in your sector typically have these 12 policies. You have 9."</p>
+          </article>
+        </div>
+
+        <div class="coordination-block">
+          <h3>Team coordination built in</h3>
+          <ul class="coord-list">
+            <li><strong>Auto-routing</strong> — IT, Legal, HR, Finance, Ops tagged and assigned on intake</li>
+            <li><strong>No email chains</strong> — comments, evidence, approvals per question in-portal</li>
+            <li><strong>Deadline visibility</strong> — every owner sees their count and the request deadline</li>
+            <li><strong>One-click escalation</strong> — ping owners from any unanswered question</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section pricing">
+      <div class="section-inner">
+        <div class="section-label">Pricing</div>
+        <h2>Pays for itself the first time it saves a deal.</h2>
+        <div class="pricing-grid">
+          <article class="price-card">
+            <h3>Per request</h3>
+            <p class="price-desc">Pay as you go for suppliers with 1–2 requests a year.</p>
+            <ul>
+              <li>Upload & ML mapping</li>
+              <li>Bring your own documents</li>
+              <li>Green / yellow / red workflow</li>
+              <li>Live progress link</li>
+            </ul>
+            <a href="#" class="btn btn-outline">Contact sales</a>
+          </article>
+          <article class="price-card featured">
+            <span class="featured-badge">Most popular</span>
+            <h3>Subscription</h3>
+            <p class="price-desc">For suppliers with 5+ requests a year.</p>
+            <ul>
+              <li>Everything in Per request</li>
+              <li>Regulatory answer repository</li>
+              <li>Policy draft generation</li>
+              <li>Document health monitoring</li>
+              <li>Framework update alerts</li>
+            </ul>
+            <a href="#" class="btn btn-primary">Get started</a>
+          </article>
+          <article class="price-card">
+            <h3>Enterprise</h3>
+            <p class="price-desc">Unlimited requests, MSPs, and multi-entity vendors.</p>
+            <ul>
+              <li>Unlimited requests</li>
+              <li>Custom framework mapping</li>
+              <li>Dedicated onboarding</li>
+              <li>White-label option</li>
+            </ul>
+            <a href="#" class="btn btn-outline">Talk to us</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-final">
+      <div class="section-inner">
+        <h2>Know what's missing in hour one — not week six.</h2>
+        <p>ClearPath turns your compliance lead from coordinator to reviewer.</p>
+        <a href="#demo" class="btn btn-primary btn-lg">See the portal demo</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="#" class="logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      ClearPath
+    </a>
+    <p>Supplier TPRM Response Portal · Ingalls Company</p>
+    <p class="footer-copy">&copy; 2026 ClearPath. All rights reserved.</p>
+  </footer>
+
+  <script>
+(function () {
+  const tabs = document.querySelectorAll('.demo-tabs [role="tab"]');
+  const panels = document.querySelectorAll('.demo-panel');
+
+  function showPanel(panelId) {
+    const id = panelId.startsWith('panel-') ? panelId : `panel-${panelId}`;
+    tabs.forEach((tab) => {
+      const match = tab.dataset.panel === panelId.replace('panel-', '');
+      tab.setAttribute('aria-selected', match ? 'true' : 'false');
+    });
+    panels.forEach((panel) => {
+      const active = panel.id === id;
+      panel.classList.toggle('active', active);
+      panel.hidden = !active;
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => showPanel(tab.dataset.panel));
+  });
+
+  document.querySelector('[data-goto="workspace"]')?.addEventListener('click', () => {
+    showPanel('workspace');
+    document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  const menuToggle = document.querySelector('.menu-toggle');
+  menuToggle?.addEventListener('click', () => {
+    const open = document.body.classList.toggle('nav-open');
+    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.querySelectorAll('.nav-links a').forEach((link) => {
+    link.addEventListener('click', () => document.body.classList.remove('nav-open'));
+  });
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.progress-fill').forEach((bar) => {
+          const w = bar.style.width;
+          bar.style.width = '0';
+          requestAnimationFrame(() => {
+            bar.style.width = w;
+          });
+        });
+      });
+    },
+    { threshold: 0.3 }
+  );
+  document.querySelectorAll('.dashboard-stats').forEach((el) => observer.observe(el));
+})();
+
+  </script>
+</body>
+</html>
