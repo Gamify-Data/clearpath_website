@@ -73,6 +73,12 @@ img { max-width: 100%; height: auto; }
   background: rgba(12, 17, 23, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.site-header.scrolled {
+  background: rgba(12, 17, 23, 0.96);
+  border-bottom-color: var(--border-strong);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 .logo {
   display: flex;
@@ -99,6 +105,9 @@ img { max-width: 100%; height: auto; }
   transition: color 0.15s;
 }
 .nav-links a:hover { color: var(--text); }
+.nav-links a.active {
+  color: var(--accent);
+}
 .header-cta { display: flex; gap: 0.75rem; }
 .menu-toggle {
   display: none;
@@ -129,7 +138,11 @@ img { max-width: 100%; height: auto; }
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .btn-lg { padding: 0.85rem 1.75rem; font-size: 1rem; }
 .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.8rem; }
@@ -142,6 +155,8 @@ img { max-width: 100%; height: auto; }
   background: var(--accent-hover);
   border-color: var(--accent-hover);
   color: #0a1210;
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px var(--accent-glow);
 }
 .btn-outline {
   background: transparent;
@@ -168,6 +183,7 @@ img { max-width: 100%; height: auto; }
 
 /* Hero */
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
@@ -176,6 +192,47 @@ img { max-width: 100%; height: auto; }
   padding: calc(var(--header-h) + 3rem) 1.5rem 4rem;
   max-width: calc(var(--max) + 3rem);
   margin: 0 auto;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20%;
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 40%, rgba(61, 155, 143, 0.14), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 80% 60%, rgba(61, 155, 143, 0.08), transparent 65%),
+    radial-gradient(ellipse 30% 25% at 60% 20%, rgba(45, 107, 99, 0.1), transparent 60%);
+  animation: meshDrift 22s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero > * { position: relative; z-index: 1; }
+@keyframes meshDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(3%, -2%) scale(1.05); }
+}
+.hero-content > * {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: heroFadeIn 0.65s ease forwards;
+}
+.hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+.hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.35s; }
+.hero-content > *:nth-child(4) { animation-delay: 0.5s; }
+.hero-content > *:nth-child(5) { animation-delay: 0.65s; }
+@keyframes heroFadeIn {
+  to { opacity: 1; transform: translateY(0); }
 }
 .eyebrow {
   font-size: 0.8rem;
@@ -212,7 +269,65 @@ img { max-width: 100%; height: auto; }
 }
 
 .hero-visual { display: flex; justify-content: flex-end; }
+.hero-visual-stack {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  min-height: 320px;
+}
+.hero-glow-orb {
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: orbPulse 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes orbPulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.08); }
+}
+.hero-card-ghost {
+  position: absolute;
+  top: -12px;
+  right: -16px;
+  width: 72%;
+  padding: 1.25rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  opacity: 0.55;
+  z-index: 1;
+  animation: floatGhost 7s ease-in-out infinite;
+}
+@keyframes floatGhost {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+.hero-card-ghost .ghost-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin: 0.5rem 0 0.75rem;
+}
+.hero-card-ghost .ghost-stat {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green);
+}
+.hero-card-ghost .ghost-stat span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
 .hero-card {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 380px;
   padding: 1.75rem;
@@ -220,6 +335,21 @@ img { max-width: 100%; height: auto; }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  animation: floatCard 6s ease-in-out infinite;
+}
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.hero-card .bar::after {
+  width: 0;
+  animation: barFill 1.1s ease forwards;
+}
+.hero-card .bar-row:nth-child(1) .bar::after { animation-delay: 0.9s; }
+.hero-card .bar-row:nth-child(2) .bar::after { animation-delay: 1.1s; }
+.hero-card .bar-row:nth-child(3) .bar::after { animation-delay: 1.3s; }
+@keyframes barFill {
+  to { width: var(--w, 50%); }
 }
 .hero-card-header {
   display: flex;
@@ -302,6 +432,12 @@ img { max-width: 100%; height: auto; }
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.pain-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 .pain-num {
   font-size: 0.75rem;
@@ -328,6 +464,13 @@ img { max-width: 100%; height: auto; }
   flex: 1 1 140px;
   text-align: center;
   padding: 1rem;
+  border-radius: var(--radius);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+.flow-step.active {
+  background: rgba(61, 155, 143, 0.06);
+  box-shadow: 0 0 24px var(--accent-glow);
+  transform: scale(1.03);
 }
 .flow-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
 .flow-step h4 { font-size: 0.95rem; margin-bottom: 0.25rem; }
@@ -461,8 +604,23 @@ img { max-width: 100%; height: auto; }
 }
 
 .demo-app { min-height: 480px; }
-.demo-panel { display: none; }
-.demo-panel.active { display: block; }
+.demo-app { position: relative; }
+.demo-panel {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+.demo-panel.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  pointer-events: auto;
+}
 
 .app-chrome {
   display: flex;
@@ -690,6 +848,12 @@ img { max-width: 100%; height: auto; }
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.feature-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 .feature-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
 .feature-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
@@ -730,10 +894,23 @@ img { max-width: 100%; height: auto; }
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.price-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.price-card:hover li { color: var(--text); }
+.price-card li {
+  transition: color 0.25s ease;
 }
 .price-card.featured {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent-glow), 0 16px 40px rgba(0,0,0,0.3);
+}
+.price-card.featured:hover {
+  box-shadow: 0 0 0 1px var(--accent), 0 20px 48px rgba(61, 155, 143, 0.2);
 }
 .featured-badge {
   position: absolute;
@@ -820,6 +997,12 @@ img { max-width: 100%; height: auto; }
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.story-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 .story-persona {
   display: flex;
@@ -869,8 +1052,20 @@ img { max-width: 100%; height: auto; }
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
-.who-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+.who-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.who-card:hover .who-icon { transform: scale(1.15); }
+.who-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
 .who-card h3 { font-size: 1rem; margin-bottom: 0.35rem; }
 .who-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
 .why-block {
@@ -921,12 +1116,43 @@ img { max-width: 100%; height: auto; }
 .use-cases-cta strong { color: var(--text); }
 .use-case-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
+/* Scroll reveals */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger > .reveal:nth-child(2) { transition-delay: 80ms; }
+.reveal-stagger > .reveal:nth-child(3) { transition-delay: 160ms; }
+.reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
+.reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
+.reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .hero-content > * { opacity: 1; transform: none; animation: none; }
+  .hero-card .bar::after { width: var(--w, 50%); animation: none; }
+}
+
 /* Mobile nav */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; text-align: center; padding-top: calc(var(--header-h) + 2rem); }
   .hero-lead { margin-left: auto; margin-right: auto; }
   .hero-actions, .hero-stats { justify-content: center; }
   .hero-visual { justify-content: center; }
+  .hero-visual-stack { margin: 0 auto; }
+  .hero-card-ghost { display: none; }
   .problem-grid, .feature-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: 1fr; }
   .flow-diagram { flex-direction: column; }
@@ -970,11 +1196,11 @@ img { max-width: 100%; height: auto; }
       ClearPath
     </a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="#intro">About</a>
-      <a href="#problem">Problem</a>
-      <a href="#workflow">How it works</a>
-      <a href="#demo">Product</a>
-      <a href="#pricing">Pricing</a>
+      <a href="#intro" data-section="intro">About</a>
+      <a href="#problem" data-section="problem">Problem</a>
+      <a href="#workflow" data-section="workflow">How it works</a>
+      <a href="#demo" data-section="demo">Product</a>
+      <a href="#pricing" data-section="pricing">Pricing</a>
       <a href="use-cases.html">Use Cases</a>
     </nav>
     <div class="header-cta">
@@ -1001,20 +1227,27 @@ img { max-width: 100%; height: auto; }
         </div>
         <dl class="hero-stats">
           <div>
-            <dt>150 questions</dt>
+            <dt data-count="150" data-suffix=" questions">0 questions</dt>
             <dd>Mapped in minutes</dd>
           </div>
           <div>
-            <dt>69% auto-matched</dt>
+            <dt data-count="69" data-suffix="% auto-matched">0% auto-matched</dt>
             <dd>On first upload</dd>
           </div>
           <div>
-            <dt>4–6 hours</dt>
+            <dt data-count="4" data-suffix="–6 hours">0–6 hours</dt>
             <dd>Not 6–8 weeks</dd>
           </div>
         </dl>
       </div>
       <div class="hero-visual" aria-hidden="true">
+        <div class="hero-visual-stack">
+          <div class="hero-glow-orb"></div>
+          <div class="hero-card-ghost">
+            <span class="pill pill-high" style="background: var(--green-bg); color: var(--green);">Live</span>
+            <p class="ghost-label">Progress link · shared with buyer</p>
+            <div class="ghost-stat">98 <span>questions complete</span></div>
+          </div>
         <div class="hero-card">
           <div class="hero-card-header">
             <span class="pill pill-high">High risk</span>
@@ -1029,18 +1262,19 @@ img { max-width: 100%; height: auto; }
           </div>
           <p class="eta">Est. completion: 4–6 hours</p>
         </div>
+        </div>
       </div>
     </section>
 
     <section id="intro" class="section intro">
       <div class="section-inner">
-        <div class="section-label">Why ClearPath exists</div>
-        <h2 class="intro-headline">Third-party risk reviews shouldn't take six weeks. They don't have to.</h2>
-        <p class="intro-sub">ClearPath was built for one reason: the people doing this work are smart, the information exists, and the process is still broken. We fix the process.</p>
+        <div class="section-label reveal">Why ClearPath exists</div>
+        <h2 class="intro-headline reveal">Third-party risk reviews shouldn't take six weeks. They don't have to.</h2>
+        <p class="intro-sub reveal">ClearPath was built for one reason: the people doing this work are smart, the information exists, and the process is still broken. We fix the process.</p>
 
         <!-- Story cards -->
-        <div class="story-grid">
-          <div class="story-card">
+        <div class="story-grid reveal-stagger">
+          <div class="story-card reveal">
             <div class="story-persona">
               <div class="persona-avatar">👩‍💼</div>
               <div>
@@ -1051,7 +1285,7 @@ img { max-width: 100%; height: auto; }
             <blockquote>"We'd get a 200-question SIG from a Fortune 500 and I'd spend the first three days just emailing people asking if we had a document. Half the time nobody knew. We were one deal away from a compliance hire we couldn't afford."</blockquote>
             <div class="story-outcome">→ Now maps 150 questions in under 20 minutes on intake</div>
           </div>
-          <div class="story-card">
+          <div class="story-card reveal">
             <div class="story-persona">
               <div class="persona-avatar">👨‍💻</div>
               <div>
@@ -1062,7 +1296,7 @@ img { max-width: 100%; height: auto; }
             <blockquote>"Every hospital system asks essentially the same HIPAA questions in a completely different format. We were copy-pasting answers from old submissions and hoping nothing had changed. When something had changed, we found out from the buyer — not ourselves."</blockquote>
             <div class="story-outcome">→ Answer library stays current; gaps surface before buyers do</div>
           </div>
-          <div class="story-card">
+          <div class="story-card reveal">
             <div class="story-persona">
               <div class="persona-avatar">🏢</div>
               <div>
@@ -1076,36 +1310,36 @@ img { max-width: 100%; height: auto; }
         </div>
 
         <!-- Who it's for -->
-        <div class="section-label">Built for</div>
-        <h2 style="font-size: clamp(1.25rem,2.5vw,1.75rem); margin-bottom: 0.5rem;">Any organization that sells to organizations with compliance requirements</h2>
-        <p class="section-desc">If your buyers are in finance, healthcare, government, or enterprise tech — they have a vendor review process. ClearPath makes yours fast.</p>
-        <div class="who-grid">
-          <div class="who-card">
+        <div class="section-label reveal">Built for</div>
+        <h2 class="reveal" style="font-size: clamp(1.25rem,2.5vw,1.75rem); margin-bottom: 0.5rem;">Any organization that sells to organizations with compliance requirements</h2>
+        <p class="section-desc reveal">If your buyers are in finance, healthcare, government, or enterprise tech — they have a vendor review process. ClearPath makes yours fast.</p>
+        <div class="who-grid reveal-stagger">
+          <div class="who-card reveal">
             <div class="who-icon">🏗️</div>
             <h3>SaaS &amp; Tech Vendors</h3>
             <p>Series A–C companies whose growth depends on landing enterprise deals — and enterprise deals require passing security reviews.</p>
           </div>
-          <div class="who-card">
+          <div class="who-card reveal">
             <div class="who-icon">🏥</div>
             <h3>Healthcare &amp; Life Sciences Suppliers</h3>
             <p>Vendors selling into hospital systems, payers, or pharma where HIPAA, SOC 2, and HITRUST questionnaires come with every contract.</p>
           </div>
-          <div class="who-card">
+          <div class="who-card reveal">
             <div class="who-icon">🔧</div>
             <h3>Managed Service Providers</h3>
             <p>MSPs and consultancies that manage compliance on behalf of clients and need to run multiple reviews simultaneously without breaking stride.</p>
           </div>
-          <div class="who-card">
+          <div class="who-card reveal">
             <div class="who-icon">💳</div>
             <h3>Financial Services Partners</h3>
             <p>Fintech and payments vendors whose buyers run quarterly or annual PCI-DSS, SOC 2, and internal vendor risk assessments.</p>
           </div>
-          <div class="who-card">
+          <div class="who-card reveal">
             <div class="who-icon">🏛️</div>
             <h3>Government Contractors</h3>
             <p>Contractors and sub-contractors who navigate CMMC, FedRAMP, and agency-specific security questionnaires as part of bid and renewal cycles.</p>
           </div>
-          <div class="who-card">
+          <div class="who-card reveal">
             <div class="who-icon">🌐</div>
             <h3>Any Supplier to a Global Enterprise</h3>
             <p>If your largest customers use SAP Ariba, ServiceNow, or internal TPRM platforms — your vendor reviews just got automated.</p>
@@ -1113,7 +1347,7 @@ img { max-width: 100%; height: auto; }
         </div>
 
         <!-- Why now -->
-        <div class="why-block">
+        <div class="why-block reveal">
           <div>
             <h3>The problem isn't complexity. It's coordination.</h3>
             <p>A typical 150-question vendor security questionnaire contains roughly 40 unique concepts. Your organization almost certainly has documented answers to 80–90% of them — scattered across SharePoint, Google Drive, email attachments, and a compliance folder no one's touched since 2023.</p>
@@ -1122,21 +1356,21 @@ img { max-width: 100%; height: auto; }
           </div>
           <div class="why-stat-stack">
             <div class="why-stat">
-              <div class="why-stat-num">6 wk</div>
+              <div class="why-stat-num" data-count="6" data-suffix=" weeks">0 weeks</div>
               <div>
                 <div style="font-weight:600; font-size:0.9rem;">Average industry response time</div>
                 <div class="why-stat-label">For a standard 100–200 question TPRM questionnaire</div>
               </div>
             </div>
             <div class="why-stat">
-              <div class="why-stat-num">4–6 hr</div>
+              <div class="why-stat-num" data-count="4" data-suffix="–6 hours">0–6 hours</div>
               <div>
                 <div style="font-weight:600; font-size:0.9rem;">ClearPath response time</div>
                 <div class="why-stat-label">For the same questionnaire with an established document library</div>
               </div>
             </div>
             <div class="why-stat">
-              <div class="why-stat-num">69%</div>
+              <div class="why-stat-num" data-count="69" data-suffix="%">0%</div>
               <div>
                 <div style="font-weight:600; font-size:0.9rem;">Auto-mapped on first upload</div>
                 <div class="why-stat-label">ML confidence ≥85% — no human review required</div>
@@ -1146,7 +1380,7 @@ img { max-width: 100%; height: auto; }
         </div>
 
         <!-- Use case white paper CTAs -->
-        <div class="use-cases-cta">
+        <div class="use-cases-cta reveal">
           <div>
             <strong>See it in your context.</strong>
             <p>Read our use case white papers for specific industries and scenarios.</p>
@@ -1162,25 +1396,25 @@ img { max-width: 100%; height: auto; }
 
     <section id="problem" class="section problem">
       <div class="section-inner">
-        <div class="section-label">The real problem</div>
-        <h2>Your compliance analyst is a coordinator, not a reviewer.</h2>
-        <div class="problem-grid">
-          <article class="pain-card">
+        <div class="section-label reveal">The real problem</div>
+        <h2 class="reveal">Your compliance analyst is a coordinator, not a reviewer.</h2>
+        <div class="problem-grid reveal-stagger">
+          <article class="pain-card reveal">
             <span class="pain-num">01</span>
             <h3>150 blank questions</h3>
             <p>No map from questionnaire items to policies in SharePoint, Drive, or email attachments.</p>
           </article>
-          <article class="pain-card">
+          <article class="pain-card reveal">
             <span class="pain-num">02</span>
             <h3>Six department email chains</h3>
             <p>"Do we have a policy for this?" — days of waiting before anyone can start real work.</p>
           </article>
-          <article class="pain-card">
+          <article class="pain-card reveal">
             <span class="pain-num">03</span>
             <h3>Gaps discovered mid-flight</h3>
             <p>Twenty policies don't exist. Writing from scratch pushes the timeline to weeks.</p>
           </article>
-          <article class="pain-card">
+          <article class="pain-card reveal">
             <span class="pain-num">04</span>
             <h3>Buyer in the dark</h3>
             <p>They give 6–8 weeks because that's how long coordination takes — not because the work requires it.</p>
@@ -1191,9 +1425,9 @@ img { max-width: 100%; height: auto; }
 
     <section id="workflow" class="section workflow">
       <div class="section-inner">
-        <div class="section-label">Core workflow</div>
-        <h2>From upload to package in one continuous flow.</h2>
-        <div class="flow-diagram">
+        <div class="section-label reveal">Core workflow</div>
+        <h2 class="reveal">From upload to package in one continuous flow.</h2>
+        <div class="flow-diagram reveal" id="flow-diagram">
           <div class="flow-step">
             <div class="flow-icon">📄</div>
             <h4>Upload request</h4>
@@ -1228,7 +1462,7 @@ img { max-width: 100%; height: auto; }
           </div>
         </div>
 
-        <div class="compare-table-wrap">
+        <div class="compare-table-wrap reveal">
           <table class="compare-table">
             <thead>
               <tr>
@@ -1252,11 +1486,11 @@ img { max-width: 100%; height: auto; }
 
     <section id="demo" class="section demo">
       <div class="section-inner">
-        <div class="section-label">The three screens that matter</div>
-        <h2>See the shape of the problem in hour one.</h2>
-        <p class="section-desc">Interactive preview — switch between the request dashboard, question workspace, and document library.</p>
+        <div class="section-label reveal">The three screens that matter</div>
+        <h2 class="reveal">See the shape of the problem in hour one.</h2>
+        <p class="section-desc reveal">Interactive preview — switch between the request dashboard, question workspace, and document library.</p>
 
-        <div class="demo-shell">
+        <div class="demo-shell reveal">
           <nav class="demo-tabs" role="tablist" aria-label="Product screens">
             <button role="tab" aria-selected="true" aria-controls="panel-dashboard" id="tab-dashboard" data-panel="dashboard">
               <span class="tab-num">1</span> Request Dashboard
@@ -1330,7 +1564,7 @@ img { max-width: 100%; height: auto; }
             </div>
 
             <!-- Screen 2: Workspace -->
-            <div id="panel-workspace" class="demo-panel" role="tabpanel" aria-labelledby="tab-workspace" hidden>
+            <div id="panel-workspace" class="demo-panel" role="tabpanel" aria-labelledby="tab-workspace" aria-hidden="true">
               <div class="app-chrome">
                 <span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span>
                 <span class="chrome-title">Workspace · Information Security</span>
@@ -1390,7 +1624,7 @@ img { max-width: 100%; height: auto; }
             </div>
 
             <!-- Screen 3: Library -->
-            <div id="panel-library" class="demo-panel" role="tabpanel" aria-labelledby="tab-library" hidden>
+            <div id="panel-library" class="demo-panel" role="tabpanel" aria-labelledby="tab-library" aria-hidden="true">
               <div class="app-chrome">
                 <span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span>
                 <span class="chrome-title">Document Library · Evidence vault</span>
@@ -1445,28 +1679,28 @@ img { max-width: 100%; height: auto; }
 
     <section class="section features">
       <div class="section-inner">
-        <div class="section-label">Beyond mapping</div>
-        <h2>Subscription intelligence — the moat.</h2>
-        <div class="feature-grid">
-          <article class="feature-card">
+        <div class="section-label reveal">Beyond mapping</div>
+        <h2 class="reveal">Subscription intelligence — the moat.</h2>
+        <div class="feature-grid reveal-stagger">
+          <article class="feature-card reveal">
             <h3>Answer intelligence</h3>
             <p>Maintained database of what good answers look like for SIG, CAIQ, ISO 27001, SOC 2, GDPR, HIPAA, PCI-DSS.</p>
           </article>
-          <article class="feature-card">
+          <article class="feature-card reveal">
             <h3>Gap guidance</h3>
             <p>Not just "you're missing this" — exactly what a satisfying document needs to contain.</p>
           </article>
-          <article class="feature-card">
+          <article class="feature-card reveal">
             <h3>Regulatory alerts</h3>
             <p>When frameworks change, mapped documents are flagged for re-review before buyers ask.</p>
           </article>
-          <article class="feature-card">
+          <article class="feature-card reveal">
             <h3>Industry benchmarks</h3>
             <p>"Suppliers in your sector typically have these 12 policies. You have 9."</p>
           </article>
         </div>
 
-        <div class="coordination-block">
+        <div class="coordination-block reveal">
           <h3>Team coordination built in</h3>
           <ul class="coord-list">
             <li><strong>Auto-routing</strong> — IT, Legal, HR, Finance, Ops tagged and assigned on intake</li>
@@ -1480,10 +1714,10 @@ img { max-width: 100%; height: auto; }
 
     <section id="pricing" class="section pricing">
       <div class="section-inner">
-        <div class="section-label">Pricing</div>
-        <h2>Pays for itself the first time it saves a deal.</h2>
-        <div class="pricing-grid">
-          <article class="price-card">
+        <div class="section-label reveal">Pricing</div>
+        <h2 class="reveal">Pays for itself the first time it saves a deal.</h2>
+        <div class="pricing-grid reveal-stagger">
+          <article class="price-card reveal">
             <h3>Per request</h3>
             <p class="price-desc">Pay as you go for suppliers with 1–2 requests a year.</p>
             <ul>
@@ -1494,7 +1728,7 @@ img { max-width: 100%; height: auto; }
             </ul>
             <a href="#" class="btn btn-outline">Contact sales</a>
           </article>
-          <article class="price-card featured">
+          <article class="price-card featured reveal">
             <span class="featured-badge">Most popular</span>
             <h3>Subscription</h3>
             <p class="price-desc">For suppliers with 5+ requests a year.</p>
@@ -1507,7 +1741,7 @@ img { max-width: 100%; height: auto; }
             </ul>
             <a href="#" class="btn btn-primary">Get started</a>
           </article>
-          <article class="price-card">
+          <article class="price-card reveal">
             <h3>Enterprise</h3>
             <p class="price-desc">Unlimited requests, MSPs, and multi-entity vendors.</p>
             <ul>
@@ -1524,8 +1758,8 @@ img { max-width: 100%; height: auto; }
 
     <section class="cta-final">
       <div class="section-inner">
-        <h2>Know what's missing in hour one — not week six.</h2>
-        <p>ClearPath turns your compliance lead from coordinator to reviewer.</p>
+        <h2 class="reveal">Know what's missing in hour one — not week six.</h2>
+        <p class="reveal">ClearPath turns your compliance lead from coordinator to reviewer.</p>
         <a href="#demo" class="btn btn-primary btn-lg">See the portal demo</a>
       </div>
     </section>
@@ -1542,20 +1776,155 @@ img { max-width: 100%; height: auto; }
 
   <script>
 (function () {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const header = document.querySelector('.site-header');
+  const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+  const sections = ['intro', 'problem', 'workflow', 'demo', 'pricing']
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+
+  /* Hero stat count-up */
+  function animateCount(el) {
+    const target = parseInt(el.dataset.count, 10);
+    const suffix = el.dataset.suffix || '';
+    if (Number.isNaN(target)) return;
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(target * eased);
+      el.textContent = value + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if (!prefersReducedMotion) {
+    document.querySelectorAll('.hero-stats [data-count]').forEach((el, i) => {
+      setTimeout(() => animateCount(el), 700 + i * 150);
+    });
+  } else {
+    document.querySelectorAll('.hero-stats [data-count]').forEach((el) => {
+      el.textContent = el.dataset.count + (el.dataset.suffix || '');
+    });
+  }
+
+  /* Scroll reveals */
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          entry.target.querySelectorAll('[data-count]').forEach((el, i) => {
+            if (el.closest('.hero-stats')) return;
+            if (prefersReducedMotion) {
+              el.textContent = el.dataset.count + (el.dataset.suffix || '');
+            } else {
+              setTimeout(() => animateCount(el), i * 120);
+            }
+          });
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+  /* Flow diagram step pulse */
+  const flowDiagram = document.getElementById('flow-diagram');
+  const flowSteps = flowDiagram ? [...flowDiagram.querySelectorAll('.flow-step')] : [];
+  if (flowDiagram && flowSteps.length && !prefersReducedMotion) {
+    const flowObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          flowSteps.forEach((step, i) => {
+            setTimeout(() => step.classList.add('active'), i * 200);
+          });
+          flowObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    flowObserver.observe(flowDiagram);
+  }
+
+  /* Demo progress bar animation */
+  const progressObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.progress-fill').forEach((bar) => {
+          const w = bar.style.width;
+          bar.style.width = '0';
+          requestAnimationFrame(() => { bar.style.width = w; });
+        });
+      });
+    },
+    { threshold: 0.3 }
+  );
+  document.querySelectorAll('.dashboard-stats').forEach((el) => progressObserver.observe(el));
+
+  /* Header scroll state + nav spy */
+  function onScroll() {
+    header?.classList.toggle('scrolled', window.scrollY > 40);
+
+    const scrollPos = window.scrollY + varHeaderOffset();
+    let current = sections[0]?.id;
+    sections.forEach((section) => {
+      if (section.offsetTop <= scrollPos) current = section.id;
+    });
+    navLinks.forEach((link) => {
+      link.classList.toggle('active', link.dataset.section === current);
+    });
+  }
+
+  function varHeaderOffset() {
+    return (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'), 10) || 72) + 80;
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Demo tabs with crossfade */
   const tabs = document.querySelectorAll('.demo-tabs [role="tab"]');
   const panels = document.querySelectorAll('.demo-panel');
+  let switching = false;
 
   function showPanel(panelId) {
+    if (switching) return;
     const id = panelId.startsWith('panel-') ? panelId : `panel-${panelId}`;
+    const current = document.querySelector('.demo-panel.active');
+    const next = document.getElementById(id);
+    if (!next || current === next) return;
+
     tabs.forEach((tab) => {
       const match = tab.dataset.panel === panelId.replace('panel-', '');
       tab.setAttribute('aria-selected', match ? 'true' : 'false');
     });
-    panels.forEach((panel) => {
-      const active = panel.id === id;
-      panel.classList.toggle('active', active);
-      panel.hidden = !active;
-    });
+
+    function setPanelState(activeId) {
+      panels.forEach((panel) => {
+        const active = panel.id === activeId;
+        panel.classList.toggle('active', active);
+        panel.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+    }
+
+    if (prefersReducedMotion || !current) {
+      setPanelState(id);
+      return;
+    }
+
+    switching = true;
+    current.classList.remove('active');
+    current.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+      setPanelState(id);
+      switching = false;
+    }, 180);
   }
 
   tabs.forEach((tab) => {
@@ -1567,6 +1936,7 @@ img { max-width: 100%; height: auto; }
     document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  /* Mobile menu */
   const menuToggle = document.querySelector('.menu-toggle');
   menuToggle?.addEventListener('click', () => {
     const open = document.body.classList.toggle('nav-open');
@@ -1576,25 +1946,7 @@ img { max-width: 100%; height: auto; }
   document.querySelectorAll('.nav-links a').forEach((link) => {
     link.addEventListener('click', () => document.body.classList.remove('nav-open'));
   });
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.querySelectorAll('.progress-fill').forEach((bar) => {
-          const w = bar.style.width;
-          bar.style.width = '0';
-          requestAnimationFrame(() => {
-            bar.style.width = w;
-          });
-        });
-      });
-    },
-    { threshold: 0.3 }
-  );
-  document.querySelectorAll('.dashboard-stats').forEach((el) => observer.observe(el));
 })();
-
   </script>
 </body>
 </html>
