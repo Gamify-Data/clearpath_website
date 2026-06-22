@@ -694,7 +694,12 @@ img { max-width: 100%; height: auto; }
   border-radius: 4px;
   overflow: hidden;
 }
-.progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0;
+  transition: width 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
 .progress-fill.green { background: var(--green); }
 .progress-fill.yellow { background: var(--yellow); }
 .progress-fill.red { background: var(--red); }
@@ -1119,19 +1124,29 @@ img { max-width: 100%; height: auto; }
 /* Scroll reveals */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: translateY(40px);
+  transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+  will-change: opacity, transform;
 }
 .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
-.reveal-stagger > .reveal:nth-child(2) { transition-delay: 80ms; }
-.reveal-stagger > .reveal:nth-child(3) { transition-delay: 160ms; }
-.reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
-.reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
-.reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
+.reveal-stagger > .reveal:nth-child(2) { transition-delay: 100ms; }
+.reveal-stagger > .reveal:nth-child(3) { transition-delay: 200ms; }
+.reveal-stagger > .reveal:nth-child(4) { transition-delay: 300ms; }
+.reveal-stagger > .reveal:nth-child(5) { transition-delay: 400ms; }
+.reveal-stagger > .reveal:nth-child(6) { transition-delay: 500ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(2) { transition-delay: 120ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(3) { transition-delay: 240ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(4) { transition-delay: 360ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(5) { transition-delay: 480ms; }
+.section.in-view .reveal-stagger > .reveal:nth-child(6) { transition-delay: 600ms; }
+.cta-final.in-view .reveal:nth-child(1) { transition-delay: 0ms; }
+.cta-final.in-view .reveal:nth-child(2) { transition-delay: 120ms; }
+.cta-final.in-view .reveal:nth-child(3) { transition-delay: 240ms; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -1527,17 +1542,17 @@ img { max-width: 100%; height: auto; }
                   <div class="progress-bars">
                     <div class="progress-item">
                       <div class="progress-label"><span class="dot green"></span> Auto-mapped</div>
-                      <div class="progress-track"><div class="progress-fill green" style="width: 69%"></div></div>
+                      <div class="progress-track"><div class="progress-fill green" data-width="69%"></div></div>
                       <span class="progress-count">98 (69%)</span>
                     </div>
                     <div class="progress-item">
                       <div class="progress-label"><span class="dot yellow"></span> Need review</div>
-                      <div class="progress-track"><div class="progress-fill yellow" style="width: 20%"></div></div>
+                      <div class="progress-track"><div class="progress-fill yellow" data-width="20%"></div></div>
                       <span class="progress-count">28 (20%)</span>
                     </div>
                     <div class="progress-item">
                       <div class="progress-label"><span class="dot red"></span> Gaps</div>
-                      <div class="progress-track"><div class="progress-fill red" style="width: 11%"></div></div>
+                      <div class="progress-track"><div class="progress-fill red" data-width="11%"></div></div>
                       <span class="progress-count">16 (11%)</span>
                     </div>
                   </div>
@@ -1756,7 +1771,7 @@ img { max-width: 100%; height: auto; }
       </div>
     </section>
 
-    <section class="cta-final">
+    <section class="cta-final" data-reveal-section>
       <div class="section-inner">
         <h2 class="reveal">Know what's missing in hour one — not week six.</h2>
         <p class="reveal">ClearPath turns your compliance lead from coordinator to reviewer.</p>
@@ -1810,27 +1825,42 @@ img { max-width: 100%; height: auto; }
     });
   }
 
-  /* Scroll reveals */
-  const revealObserver = new IntersectionObserver(
+  /* Scroll reveals — trigger per section so fades are visible as you scroll */
+  function revealSection(section) {
+    if (section.classList.contains('in-view')) return;
+    section.classList.add('in-view');
+    const reveals = section.querySelectorAll('.reveal:not(.revealed)');
+    reveals.forEach((el, i) => {
+      const delay = prefersReducedMotion ? 0 : i * 90;
+      setTimeout(() => el.classList.add('revealed'), delay);
+    });
+    section.querySelectorAll('[data-count]').forEach((el, i) => {
+      if (el.closest('.hero-stats')) return;
+      if (prefersReducedMotion) {
+        el.textContent = el.dataset.count + (el.dataset.suffix || '');
+      } else {
+        setTimeout(() => animateCount(el), i * 120);
+      }
+    });
+  }
+
+  const sectionRevealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          entry.target.querySelectorAll('[data-count]').forEach((el, i) => {
-            if (el.closest('.hero-stats')) return;
-            if (prefersReducedMotion) {
-              el.textContent = el.dataset.count + (el.dataset.suffix || '');
-            } else {
-              setTimeout(() => animateCount(el), i * 120);
-            }
-          });
-          revealObserver.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        revealSection(entry.target);
+        sectionRevealObserver.unobserve(entry.target);
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }
   );
-  document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+  document.querySelectorAll('.section, .cta-final').forEach((el) => {
+    sectionRevealObserver.observe(el);
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) {
+      revealSection(el);
+    }
+  });
 
   /* Flow diagram step pulse */
   const flowDiagram = document.getElementById('flow-diagram');
@@ -1851,21 +1881,43 @@ img { max-width: 100%; height: auto; }
     flowObserver.observe(flowDiagram);
   }
 
-  /* Demo progress bar animation */
-  const progressObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.querySelectorAll('.progress-fill').forEach((bar) => {
-          const w = bar.style.width;
-          bar.style.width = '0';
-          requestAnimationFrame(() => { bar.style.width = w; });
+  /* Demo progress bar animation — grow when Product section is first viewed */
+  const dashboardStats = document.querySelector('.dashboard-stats');
+  const demoSection = document.getElementById('demo');
+
+  function animateDashboardBars() {
+    if (!dashboardStats || dashboardStats.classList.contains('bars-animated')) return;
+    const panel = document.getElementById('panel-dashboard');
+    if (!panel?.classList.contains('active')) return;
+
+    dashboardStats.classList.add('bars-animated');
+    const bars = dashboardStats.querySelectorAll('.progress-fill[data-width]');
+    bars.forEach((bar, i) => {
+      const target = bar.dataset.width;
+      bar.style.width = '0';
+      if (prefersReducedMotion) {
+        bar.style.width = target;
+        return;
+      }
+      setTimeout(() => { bar.style.width = target; }, 200 + i * 220);
+    });
+  }
+
+  if (demoSection) {
+    const demoBarObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) animateDashboardBars();
         });
-      });
-    },
-    { threshold: 0.3 }
-  );
-  document.querySelectorAll('.dashboard-stats').forEach((el) => progressObserver.observe(el));
+      },
+      { threshold: 0.2 }
+    );
+    demoBarObserver.observe(demoSection);
+    const demoRect = demoSection.getBoundingClientRect();
+    if (demoRect.top < window.innerHeight && demoRect.bottom > 0) {
+      animateDashboardBars();
+    }
+  }
 
   /* Header scroll state + nav spy */
   function onScroll() {
@@ -1915,6 +1967,7 @@ img { max-width: 100%; height: auto; }
 
     if (prefersReducedMotion || !current) {
       setPanelState(id);
+      if (id === 'panel-dashboard') animateDashboardBars();
       return;
     }
 
@@ -1923,6 +1976,7 @@ img { max-width: 100%; height: auto; }
     current.setAttribute('aria-hidden', 'true');
     setTimeout(() => {
       setPanelState(id);
+      if (id === 'panel-dashboard') animateDashboardBars();
       switching = false;
     }, 180);
   }
